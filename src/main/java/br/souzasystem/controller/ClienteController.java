@@ -1,10 +1,11 @@
 package br.souzasystem.controller;
 
 import br.souzasystem.domain.entity.Cliente;
-import br.souzasystem.domain.mapper.ClienteMapper;
 import br.souzasystem.domain.request.ClienteRequest;
 import br.souzasystem.domain.response.ClienteResponse;
 import br.souzasystem.repository.ClienteRepository;
+import jakarta.validation.Valid;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
@@ -23,12 +24,14 @@ public class ClienteController {
     @Autowired
     private ClienteRepository repository;
 
+    ModelMapper mapper = new ModelMapper();
+
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<ClienteResponse> getAllClientes() {
         List<Cliente> clientes = repository.findAll();
         List<ClienteResponse> responses = clientes.stream()
-                .map(ClienteMapper.INSTANCE::entityToResponse)
+                .map(cliente -> mapper.map(cliente,ClienteResponse.class))
                 .toList();
         return responses;
     }
@@ -45,27 +48,27 @@ public class ClienteController {
                 .withMatcher("login", GenericPropertyMatchers.contains())
                 .withMatcher("email", GenericPropertyMatchers.contains());
 
-        Cliente entity = ClienteMapper.INSTANCE.requestToEntity(request);
+        Cliente entity = mapper.map(request, Cliente.class);
         Example<Cliente> example = Example.of(entity, exampleMatcher);
 
         List<Cliente> clientes = repository.findAll(example);
 
         List<ClienteResponse> responses = clientes.stream()
-                .map(ClienteMapper.INSTANCE::entityToResponse).toList();
+                .map(cliente -> mapper.map(cliente,ClienteResponse.class)).toList();
 
         return responses;
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ClienteResponse salvarCliente(@RequestBody ClienteRequest request) {
-        Cliente cliente = ClienteMapper.INSTANCE.requestToEntity(request);
+    public ClienteResponse salvarCliente(@RequestBody @Valid ClienteRequest request) {
+        Cliente cliente = mapper.map(request, Cliente.class);
         try {
             repository.save(cliente);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
-        return ClienteMapper.INSTANCE.entityToResponse(cliente);
+        return mapper.map(cliente,ClienteResponse.class);
     }
 
     @DeleteMapping("{id}")

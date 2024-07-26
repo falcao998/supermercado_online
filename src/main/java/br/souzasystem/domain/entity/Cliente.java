@@ -2,6 +2,7 @@ package br.souzasystem.domain.entity;
 
 import jakarta.persistence.*;
 import org.hibernate.annotations.UuidGenerator;
+import org.springframework.context.annotation.Lazy;
 
 import java.util.List;
 
@@ -39,6 +40,7 @@ public class Cliente {
     private List<ClienteEndereco> enderecos;
 
     @OneToMany(mappedBy = "cliente")
+    @Lazy
     private List<ClientePagamento> pagamentos;
 
     public String getId() {
@@ -117,7 +119,7 @@ public class Cliente {
         return pagamentos;
     }
 
-    public void setPagamentos(List<ClientePagamento> pagamentos) {
+    public void setPagamentos(@Lazy List<ClientePagamento> pagamentos) {
         this.pagamentos = pagamentos;
     }
 }
