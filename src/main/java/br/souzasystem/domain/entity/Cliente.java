@@ -1,11 +1,15 @@
 package br.souzasystem.domain.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.UuidGenerator;
 import org.springframework.context.annotation.Lazy;
 
 import java.util.List;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "TB_CLIENTE")
 public class Cliente {
@@ -36,90 +40,12 @@ public class Cliente {
     @Column(name = "CLIENTE_EMAIL", nullable = false, unique = true)
     private String email;
 
+    @Column(name = "CLIENTE_ROLE", nullable = false)
+    private String role = "CLIENTE";
+
     @OneToMany(mappedBy = "cliente")
     private List<ClienteEndereco> enderecos;
 
     @OneToMany(mappedBy = "cliente")
-    @Lazy
     private List<ClientePagamento> pagamentos;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public String getDocumento() {
-        return documento;
-    }
-
-    public void setDocumento(String documento) {
-        this.documento = documento;
-    }
-
-    public String getTelefone() {
-        return telefone;
-    }
-
-    public void setTelefone(String telefone) {
-        this.telefone = telefone;
-    }
-
-    public String getCelular() {
-        return celular;
-    }
-
-    public void setCelular(String celular) {
-        this.celular = celular;
-    }
-
-    public String getLogin() {
-        return login;
-    }
-
-    public void setLogin(String login) {
-        this.login = login;
-    }
-
-    public String getSenha() {
-        return senha;
-    }
-
-    public void setSenha(String senha) {
-        this.senha = senha;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public List<ClienteEndereco> getEnderecos() {
-        return enderecos;
-    }
-
-    public void setEnderecos(List<ClienteEndereco> enderecos) {
-        this.enderecos = enderecos;
-    }
-
-    public List<ClientePagamento> getPagamentos() {
-        return pagamentos;
-    }
-
-    public void setPagamentos(@Lazy List<ClientePagamento> pagamentos) {
-        this.pagamentos = pagamentos;
-    }
 }

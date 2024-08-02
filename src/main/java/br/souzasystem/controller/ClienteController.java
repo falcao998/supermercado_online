@@ -4,6 +4,7 @@ import br.souzasystem.domain.entity.Cliente;
 import br.souzasystem.domain.request.ClienteRequest;
 import br.souzasystem.domain.response.ClienteResponse;
 import br.souzasystem.repository.ClienteRepository;
+import br.souzasystem.utils.SystemEncoder;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,6 +65,7 @@ public class ClienteController {
     public ClienteResponse salvarCliente(@RequestBody @Valid ClienteRequest request) {
         Cliente cliente = mapper.map(request, Cliente.class);
         try {
+            cliente.setSenha(SystemEncoder.passwordEncoder().encode(cliente.getSenha()));
             repository.save(cliente);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
